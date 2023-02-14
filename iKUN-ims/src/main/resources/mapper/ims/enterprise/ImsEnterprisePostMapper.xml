@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.enterprise.mapper.ImsEnterprisePostMapper">
+    
+    <resultMap type="ImsEnterprisePost" id="ImsEnterprisePostResult">
+        <result property="postId"    column="post_id"    />
+        <result property="postName"    column="post_name"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="requirements"    column="requirements"    />
+        <result property="postExperience"    column="post_experience"    />
+        <result property="responsibilities"    column="responsibilities"    />
+        <result property="education"    column="education"    />
+        <result property="postWage"    column="post_wage"    />
+        <result property="postTreatment"    column="post_treatment"    />
+        <result property="postNumber"    column="post_number"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <!--招聘信息Result-->
+    <resultMap type="RecruitmentInfoVo" id="RecruitmentInfoVoResult">
+        <result property="companyId"    column="company_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="companyProfile"    column="company_profile"    />
+        <result property="companyLocation"    column="company_location"    />
+        <result property="legalRepresentative"    column="legal_representative"    />
+        <result property="established"    column="established"    />
+        <result property="companyType"    column="company_type"    />
+        <result property="companyIndustry"    column="company_industry"    />
+        <result property="companyPrincipal"    column="company_principal"    />
+        <result property="principalPhone"    column="principal_phone"    />
+        <result property="principalEmail"    column="principal_email"    />
+        <result property="principalQq"    column="principal_qq"    />
+        <result property="recruitmentWebsite"    column="recruitment_website"    />
+        <result property="postId"    column="post_id"    />
+        <result property="postName"    column="post_name"    />
+        <result property="requirements"    column="requirements"    />
+        <result property="postExperience"    column="post_experience"    />
+        <result property="responsibilities"    column="responsibilities"    />
+        <result property="education"    column="education"    />
+        <result property="postWage"    column="post_wage"    />
+        <result property="postTreatment"    column="post_treatment"    />
+        <result property="postNumber"    column="post_number"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsEnterprisePostVo">
+        select post_id,post_name, company_id, requirements, post_experience, responsibilities, education, post_wage, post_treatment, post_number, del_flag, create_dept, create_by, create_time, update_by, update_time from ims_enterprise_post
+    </sql>
+
+    <!--岗位信息列表-->
+    <sql id="selectImsEnterprisePost">
+    SELECT iep.post_id,iep.post_name,iep.company_id,iei.company_name,iei.recruitment_website,iep.requirements,iep.post_experience,iep.responsibilities,iep.education,iep.post_wage,iep.post_treatment,iep.post_number,iep.del_flag,iep.create_dept,iep.create_by,iep.create_time,iep.update_by,iep.update_time
+    FROM ims_enterprise_post iep
+	left join ims_enterprise_info iei on iei.company_id = iep.company_id
+    </sql>
+
+    <!--招聘信息页面列表-->
+    <sql id="selectEnterprisePostList">
+        SELECT iei.company_id,iei.company_name,iei.company_profile,iei.company_location,iei.legal_representative,iei.established,iei.company_type,iei.company_industry,iei.company_principal,iei.principal_phone,iei.principal_email,iei.principal_qq,
+	    iep.post_id,iep.post_name,iep.requirements,iep.post_experience,iep.responsibilities,iep.education,iep.post_wage,iep.post_treatment,iep.post_number,iep.update_time
+	    FROM ims_enterprise_info iei
+	    LEFT JOIN ims_enterprise_post AS iep ON iei.company_id = iep.company_id
+    </sql>
+
+    <select id="selectImsEnterprisePostList" parameterType="ImsEnterprisePost" resultMap="ImsEnterprisePostResult">
+        <include refid="selectImsEnterprisePost"/>
+        <where>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="requirements != null  and requirements != ''"> and requirements = #{requirements}</if>
+            <if test="postExperience != null  and postExperience != ''"> and post_experience = #{postExperience}</if>
+            <if test="responsibilities != null  and responsibilities != ''"> and responsibilities = #{responsibilities}</if>
+            <if test="education != null  and education != ''"> and education = #{education}</if>
+            <if test="postWage != null  and postWage != ''"> and post_wage = #{postWage}</if>
+            <if test="postTreatment != null  and postTreatment != ''"> and post_treatment = #{postTreatment}</if>
+            <if test="postNumber != null "> and post_number = #{postNumber}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+            <if test="1 == 1 "> and iep.del_flag = '0'</if>
+        </where>
+    </select>
+
+    <!--查询招聘信息列表
+    status = '1' 审核通过
+    recruitStatus = '0' 招聘中
+    del_flag = '0' 未删除
+    -->
+    <select id="selectEnterpriseWithPostList" parameterType="RecruitmentInfoVo" resultMap="RecruitmentInfoVoResult">
+        <include refid="selectEnterprisePostList"/>
+        <where>
+            <if test="companyId != null "> and iei.company_name = #{companyName}</if>
+            <if test="postExperience != null  and postExperience != ''"> and iep.post_experience = #{postExperience}</if>
+            <if test="companyIndustry != null  and companyIndustry != ''"> and iei.company_industry = #{companyIndustry}</if>
+            <if test="companyType != null  and companyType != ''"> and iei.company_type = #{companyType}</if>
+            <if test="education != null  and education != ''"> and iep.education = #{education}</if>
+            <if test=" 1== 1"> and iei.status = '1'</if>
+            <if test=" 1== 1"> and iei.recruit_status = '0'</if>
+            <if test=" 1 == 1 "> and iei.del_flag = '0'</if>
+            <if test=" 1 == 1"> and iep.del_flag = '0'</if>
+        </where>
+    </select>
+
+    <!--通过招聘信息页面获取招聘详情-->
+    <select id="selectEnterpriseWithPostByPostId" parameterType="RecruitmentInfoVo" resultMap="RecruitmentInfoVoResult">
+        <include refid="selectEnterprisePostList"/>
+        where iep.post_id = #{PostId}
+    </select>
+    
+    <select id="selectImsEnterprisePostById" parameterType="Long" resultMap="ImsEnterprisePostResult">
+        <include refid="selectImsEnterprisePostVo"/>
+        where post_id = #{postId}
+    </select>
+        
+    <insert id="insertImsEnterprisePost" parameterType="ImsEnterprisePost" useGeneratedKeys="true" keyProperty="postId">
+        insert into ims_enterprise_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postName != null">post_name,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="requirements != null">requirements,</if>
+            <if test="postExperience != null">post_experience,</if>
+            <if test="responsibilities != null">responsibilities,</if>
+            <if test="education != null">education,</if>
+            <if test="postWage != null">post_wage,</if>
+            <if test="postTreatment != null">post_treatment,</if>
+            <if test="postNumber != null">post_number,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postName != null">#{postName},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="requirements != null">#{requirements},</if>
+            <if test="postExperience != null">#{postExperience},</if>
+            <if test="responsibilities != null">#{responsibilities},</if>
+            <if test="education != null">#{education},</if>
+            <if test="postWage != null">#{postWage},</if>
+            <if test="postTreatment != null">#{postTreatment},</if>
+            <if test="postNumber != null">#{postNumber},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsEnterprisePost" parameterType="ImsEnterprisePost">
+        update ims_enterprise_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="postName != null">post_name = #{postName},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="requirements != null">requirements = #{requirements},</if>
+            <if test="postExperience != null">post_experience = #{postExperience},</if>
+            <if test="responsibilities != null">responsibilities = #{responsibilities},</if>
+            <if test="education != null">education = #{education},</if>
+            <if test="postWage != null">post_wage = #{postWage},</if>
+            <if test="postTreatment != null">post_treatment = #{postTreatment},</if>
+            <if test="postNumber != null">post_number = #{postNumber},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where post_id = #{postId}
+    </update>
+
+    <delete id="deleteImsEnterprisePostById" parameterType="Long">
+        update from ims_enterprise_post set del_flag = '2'  where post_id = #{postId}
+    </delete>
+
+    <delete id="deleteImsEnterprisePostByIds" parameterType="String">
+        update from ims_enterprise_post set del_flag = '2' where post_id in
+        <foreach item="postId" collection="array" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+    
+</mapper>

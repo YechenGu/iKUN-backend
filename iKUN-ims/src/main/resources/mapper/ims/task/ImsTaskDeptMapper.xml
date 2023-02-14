@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.task.mapper.ImsTaskDeptMapper">
+    
+    <resultMap type="ImsTaskDept" id="ImsTaskDeptResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="teaId"     column="tea_id"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <resultMap type="ImsTaskUserVo" id="ImsTaskUserVoResult">
+        <result property="taskId"          column="task_id"    />
+        <result property="userId"          column="user_id"    />
+        <result property="academicYear"    column="academic_year"    />
+        <result property="semester"        column="semester"    />
+    </resultMap>
+
+    <sql id="selectImsTaskDeptVo">
+        select task_id, dept_id, tea_id, user_id from ims_task_dept
+    </sql>
+
+    <select id="selectImsTaskDeptList" parameterType="ImsTaskDept" resultMap="ImsTaskDeptResult">
+        <include refid="selectImsTaskDeptVo"/>
+        <where>  
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="teaId != null "> and tea_id = #{teaId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskIdByUserId" parameterType="ImsTaskUserVo" resultMap="ImsTaskUserVoResult">
+        SELECT itd.task_id FROM ims_task_dept itd LEFT JOIN ims_task_info iti on iti.task_id = itd.task_id
+        where (iti.academic_year = #{academicYear} or iti.academic_year = #{academicYear} - 1)
+            and (iti.semester = '1' or iti.semester = '2') and itd.user_id = #{userId}
+
+    </select>
+    
+    <select id="selectImsTaskDeptById" parameterType="Long" resultMap="ImsTaskDeptResult">
+        <include refid="selectImsTaskDeptVo"/>
+        where task_id = #{taskId} and user_id = #{userId}
+    </select>
+        
+    <insert id="insertImsTaskDept" parameterType="ImsTaskDept">
+        insert into ims_task_dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="teaId != null">tea_id,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="teaId != null">#{teaId},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsTaskDept" parameterType="ImsTaskDept">
+        update ims_task_dept
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="teaId != null">tea_id = #{teaId},</if>
+        </trim>
+        where task_id = #{taskId} and user_id = #{userId}
+    </update>
+
+    <delete id="deleteImsTaskDeptById" parameterType="Long">
+        delete from ims_task_dept where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteImsTaskDeptByIds" parameterType="String">
+        delete from ims_task_dept where task_id in 
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+    
+</mapper>

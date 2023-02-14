@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.thesis.mapper.ImsThesisTaskBookMapper">
+    
+    <resultMap type="ImsThesisTaskBook" id="ImsThesisTaskBookResult">
+        <result property="taskBookId"    column="task_book_id"    />
+        <result property="topicId"    column="topic_id"    />
+        <result property="researchContent"    column="research_content"    />
+        <result property="process"    column="process"    />
+        <result property="reference"    column="reference"    />
+        <result property="deptOpinion"    column="dept_opinion"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsThesisTaskBookVo">
+        select task_book_id, topic_id, research_content, process, reference, dept_opinion, del_flag, create_dept, create_by, create_time, update_by, update_time from ims_thesis_task_book
+    </sql>
+
+    <select id="selectImsThesisTaskBookList" parameterType="ImsThesisTaskBook" resultMap="ImsThesisTaskBookResult">
+        <include refid="selectImsThesisTaskBookVo"/>
+        <where>  
+            <if test="topicId != null  and topicId != ''"> and topic_id = #{topicId}</if>
+            <if test="researchContent != null  and researchContent != ''"> and research_content = #{researchContent}</if>
+            <if test="process != null  and process != ''"> and process = #{process}</if>
+            <if test="reference != null  and reference != ''"> and reference = #{reference}</if>
+            <if test="deptOpinion != null  and deptOpinion != ''"> and dept_opinion = #{deptOpinion}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsThesisTaskBookById" parameterType="Long" resultMap="ImsThesisTaskBookResult">
+        <include refid="selectImsThesisTaskBookVo"/>
+        where task_book_id = #{taskBookId}
+    </select>
+        
+    <insert id="insertImsThesisTaskBook" parameterType="ImsThesisTaskBook" useGeneratedKeys="true" keyProperty="taskBookId">
+        insert into ims_thesis_task_book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="topicId != null">topic_id,</if>
+            <if test="researchContent != null">research_content,</if>
+            <if test="process != null">process,</if>
+            <if test="reference != null">reference,</if>
+            <if test="deptOpinion != null">dept_opinion,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="topicId != null">#{topicId},</if>
+            <if test="researchContent != null">#{researchContent},</if>
+            <if test="process != null">#{process},</if>
+            <if test="reference != null">#{reference},</if>
+            <if test="deptOpinion != null">#{deptOpinion},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsThesisTaskBook" parameterType="ImsThesisTaskBook">
+        update ims_thesis_task_book
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="topicId != null">topic_id = #{topicId},</if>
+            <if test="researchContent != null">research_content = #{researchContent},</if>
+            <if test="process != null">process = #{process},</if>
+            <if test="reference != null">reference = #{reference},</if>
+            <if test="deptOpinion != null">dept_opinion = #{deptOpinion},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where task_book_id = #{taskBookId}
+    </update>
+
+    <delete id="deleteImsThesisTaskBookById" parameterType="Long">
+        delete from ims_thesis_task_book where task_book_id = #{taskBookId}
+    </delete>
+
+    <delete id="deleteImsThesisTaskBookByIds" parameterType="String">
+        delete from ims_thesis_task_book where task_book_id in 
+        <foreach item="taskBookId" collection="array" open="(" separator="," close=")">
+            #{taskBookId}
+        </foreach>
+    </delete>
+    
+</mapper>

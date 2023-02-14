@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.analysis.mapper.ImsThesisAnalysisMapper">
+    <!--实习人数相关统计分析-->
+    <resultMap type="ImsThesisStatisticsVo"  id="ImsThesisStatisticsResult">
+        <result property="userId"          column="user_id"    />
+        <result property="topicId"         column="topic_id"    />
+        <result property="deptId"          column="dept_id"    />
+        <result property="taskId"          column="task_id"    />
+        <result property="delFlag"         column="del_flag"    />
+        <result property="topicStatus"     column="topic_status"    />
+        <result property="academicYear"    column="academic_year"    />
+    </resultMap>
+
+    <sql id="selectThesisStatisticsList">
+        select
+            tt.topic_id,
+            tt.user_id,
+            tt.dept_id,
+            tt.task_id,
+            it.academic_year,
+            tt.topic_status,
+            tt.del_flag
+        from
+            ims_thesis_topic tt left join ims_task_info it on it.task_id = tt.task_id
+            left join sys_user su on su.user_id = tt.user_id
+    </sql>
+
+    <select id="selectThesisStatisticsList" parameterType="ImsThesisStatisticsVo" resultMap="ImsThesisStatisticsResult">
+        <include refid="selectThesisStatisticsList"/>
+        <where>
+            <if test="academicYear != null  and academicYear != ''"> and it.academic_year = #{academicYear}</if>
+            <if test="userId != null and userId != ''">AND tt.user_id = #{userId} </if>
+            <if test="deptId != null and deptId != ''">AND (su.dept_id = #{deptId} OR su.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId}, ancestors)))</if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.practice.mapper.ImsPracticeMapper">
+    
+    <resultMap type="ImsPractice" id="ImsPracticeResult">
+        <result property="practiceId"    column="practice_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="practicePost"    column="practice_post"    />
+        <result property="practiceType"    column="practice_type"    />
+        <result property="parentName"    column="parent_name"    />
+        <result property="parentPhone"    column="parent_phone"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="schoolInstructor"    column="school_instructor"    />
+        <result property="internInstructor"    column="intern_instructor"    />
+        <result property="internPhone"    column="intern_phone"    />
+        <result property="internEmail"    column="intern_email"    />
+        <result property="beginTime"    column="begin_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="practiceDesc"    column="practice_desc"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="practiceStatus"    column="practice_status"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <!--指导老师相关-->
+    <resultMap type="ImsInternInstructorVo" id="ImsInternInstructorResult" >
+        <result property="companyName"    column="company_name"    />
+        <result property="internInstructor"    column="intern_instructor"    />
+        <result property="internPhone"    column="intern_phone"    />
+        <result property="internEmail"    column="intern_email"    />
+        <result property="userId"    column="user_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="deptId"     column="dept_id"     />
+        <result property="deptName"   column="dept_name"   />
+        <result property="professionName"   column="profession_name"   />
+    </resultMap>
+
+    <sql id="selectImsPracticeVo">
+        select ip.practice_id, ip.user_id, su.nick_name, ip.task_id, ip.company_id,ei.company_name,practice_post,practice_type, parent_name,parent_phone, school_instructor, intern_instructor, intern_phone, intern_email, begin_time, end_time, practice_desc, ip.status, ip.del_flag, practice_status, ip.create_dept, ip.create_by, ip.create_time, ip.update_by, ip.update_time from ims_practice ip
+        left join ims_enterprise_info ei on ei.company_id = ip.company_id
+        left join sys_user su on su.user_id = ip.user_id
+    </sql>
+
+    <sql id="selectImsPracticeWithNameVo">
+        SELECT ip.practice_id,ip.user_id, ip.task_id, su.nick_name,ip.company_id,ei.company_name,ip.practice_post,ip.practice_type,ip.parent_name,ip.parent_phone,ip.school_instructor,ip.intern_instructor,ip.intern_phone,ip.intern_email,ip.begin_time,ip.end_time,ip.practice_desc,ip.STATUS,ip.del_flag,ip.practice_status,ip.create_dept,ip.create_by,ip.create_time,ip.update_by,ip.update_time
+        FROM ims_practice ip left join sys_user su on su.user_id = ip.user_id
+        left join ims_enterprise_info ei on ei.company_id = ip.company_id
+    </sql>
+
+    <!--查询实习指导老师-->
+    <sql id="selectInternInstructorVo">
+        SELECT distinct COUNT(ip.company_name), ip.company_name, ip.intern_instructor, ip.intern_phone, ip.intern_email, su.dept_id, sd.dept_name, SUBSTRING_INDEX(SUBSTRING_INDEX(sd.ancestors,',',-2),',',1) AS profession_name, ip.user_id, su.nick_name, su.phonenumber FROM `ims_practice` ip LEFT JOIN sys_user su ON ip.user_id = su.user_id LEFT JOIN sys_dept sd ON sd.dept_id = su.dept_id
+    </sql>
+
+    <!--导出-->
+    <sql id="exportInternInstructorVo">
+        SELECT distinct  ip.company_name, ip.intern_instructor, ip.intern_phone, ip.intern_email, su.dept_id, sd.dept_name, SUBSTRING_INDEX(SUBSTRING_INDEX(sd.ancestors,',',-2),',',1) AS profession_name, ip.user_id, su.nick_name, su.phonenumber FROM `ims_practice` ip LEFT JOIN sys_user su ON ip.user_id = su.user_id LEFT JOIN sys_dept sd ON sd.dept_id = su.dept_id
+    </sql>
+
+    <!--通过实习单位查询学生信息-->
+    <sql id="selectStutPracticeInfoByCompanyName">
+        SELECT distinct ip.company_name, su.dept_id, sd.dept_name, SUBSTRING_INDEX(SUBSTRING_INDEX(sd.ancestors,',',-2),',',1) AS profession_name, ip.user_id, su.nick_name, su.phonenumber FROM `ims_practice` ip LEFT JOIN sys_user su ON ip.user_id = su.user_id LEFT JOIN sys_dept sd ON sd.dept_id = su.dept_id
+    </sql>
+
+    <!--学生实习名单List->教师所看的 -->
+    <select id="selectImsPracticeList" parameterType="ImsPractice" resultMap="ImsPracticeResult">
+        <include refid="selectImsPracticeWithNameVo"/>
+        <where>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="schoolInstructor != null  and schoolInstructor != ''"> and school_instructor = #{schoolInstructor}</if>
+            <if test="internInstructor != null  and internInstructor != ''"> and intern_instructor = #{internInstructor}</if>
+            <if test="internPhone != null  and internPhone != ''"> and intern_phone = #{internPhone}</if>
+            <if test="internEmail != null  and internEmail != ''"> and intern_email = #{internEmail}</if>
+            <if test="beginTime != null "> and begin_time = #{beginTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="practiceType != null  and practiceType != ''"> and practice_type = #{practiceType}</if>
+            <if test="status != null  and status != ''"> and ip.status = #{status}</if>
+            <if test="practiceStatus != null  and practiceStatus != ''"> and practice_status = #{practiceStatus}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+            <if test=" 1 == 1"> and ip.del_flag = '0'</if>
+            <if test="1 == 1 "> order by practice_status ASC</if>
+        </where>
+    </select>
+
+    <!--学生实习申请List->个人申请记录 -->
+    <select id="selectImsPracticePersonalList" parameterType="ImsPractice" resultMap="ImsPracticeResult">
+        <include refid="selectImsPracticeVo"/>
+        <where>
+            <if test="1 == 1 "> and ip.user_id = #{userId}</if>
+            <if test="practiceStatus != null  and practiceStatus != ''"> and ip.practice_status = #{practiceStatus}</if>
+            <if test="1 == 1 "> and ip.del_flag = '0'</if>
+            <if test="1 == 1 "> order by ip.practice_status ASC</if>
+        </where>
+    </select>
+
+    <!--实习指导老师列表-->
+    <select id="selectInternInstructorList" parameterType="ImsInternInstructorVo" resultMap="ImsInternInstructorResult">
+        <include refid="selectInternInstructorVo"/>
+        <where>
+            <if test=" 1 == 1 ">and ip.status = '1'</if>
+            <if test=" 1 == 1 ">and ip.del_flag = '0'</if>
+            <if test="companyName != null  and companyName != ''"> and  ip.company_name like concat('%', #{companyName}, '%')</if>
+            <if test="internInstructor != null  and internInstructor != ''"> and  ip.intern_instructor = #{internInstructor}</if>
+            <if test="internPhone != null  and internPhone != ''"> and  ip.intern_phone = #{internPhone}</if>
+            <if test="internEmail != null  and internEmail != ''"> and  ip.intern_email = #{internEmail}</if>
+            <if test="nickName != null  and nickName != ''"> and su.nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="deptName != null  and deptName != ''"> and sd.dept_name like concat('%', #{deptName}, '%')</if>
+            <if test=" 1 == 1 "> GROUP BY ip.company_name</if>
+        </where>
+    </select>
+
+    <!--导出实习指导老师列表-->
+    <select id="exportInternInstructorList" parameterType="ImsInternInstructorVo" resultMap="ImsInternInstructorResult">
+        <include refid="exportInternInstructorVo"/>
+        <where>
+            <if test="companyName != null  and companyName != ''"> and  ip.company_name like concat('%', #{companyName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectImsPracticeById" parameterType="Long" resultMap="ImsPracticeResult">
+        <include refid="selectImsPracticeVo"/>
+        where practice_id = #{practiceId}
+    </select>
+
+    <select id="selectImsPracticeByTaskId" parameterType="Long" resultMap="ImsPracticeResult">
+        <include refid="selectImsPracticeVo"/>
+        where task_id = #{taskId}
+    </select>
+
+    <select id="selectPracticeNumberByTaskId" resultType="Long">
+        select COUNT(DISTINCT task_id , user_id) FROM ims_practice where task_id = #{taskId}
+    </select>
+        
+    <insert id="insertImsPractice" parameterType="ImsPractice" useGeneratedKeys="true" keyProperty="practiceId">
+        insert into ims_practice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="parentName != null">parent_name,</if>
+            <if test="parentPhone != null">parent_phone,</if>
+            <if test="practicePost != null">practice_post,</if>
+            <if test="practiceType != null">practice_type,</if>
+            <if test="schoolInstructor != null">school_instructor,</if>
+            <if test="internInstructor != null">intern_instructor,</if>
+            <if test="internPhone != null">intern_phone,</if>
+            <if test="internEmail != null">intern_email,</if>
+            <if test="beginTime != null">begin_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="practiceDesc != null">practice_desc,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="practiceStatus != null">practice_status,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="parentName != null">#{parentName},</if>
+            <if test="parentPhone != null">#{parentPhone},</if>
+            <if test="practicePost != null">#{practicePost},</if>
+            <if test="practiceType != null">#{practiceType},</if>
+            <if test="schoolInstructor != null">#{schoolInstructor},</if>
+            <if test="internInstructor != null">#{internInstructor},</if>
+            <if test="internPhone != null">#{internPhone},</if>
+            <if test="internEmail != null">#{internEmail},</if>
+            <if test="beginTime != null">#{beginTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="practiceDesc != null">#{practiceDesc},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="practiceStatus != null">#{practiceStatus},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsPractice" parameterType="ImsPractice">
+        update ims_practice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="parentName != null">parent_name = #{parentName},</if>
+            <if test="parentPhone != null">parent_phone = #{parentPhone},</if>
+            <if test="practicePost != null">practice_post = #{practicePost},</if>
+            <if test="practiceType != null">practice_type = #{practiceType},</if>
+            <if test="schoolInstructor != null">school_instructor = #{schoolInstructor},</if>
+            <if test="internInstructor != null">intern_instructor = #{internInstructor},</if>
+            <if test="internPhone != null">intern_phone = #{internPhone},</if>
+            <if test="internEmail != null">intern_email = #{internEmail},</if>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="practiceDesc != null">practice_desc = #{practiceDesc},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="practiceStatus != null">practice_status = #{practiceStatus},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where practice_id = #{practiceId}
+    </update>
+
+    <delete id="deleteImsPracticeById" parameterType="Long">
+        update ims_practice set del_flag = '2' where practice_id = #{practiceId}
+    </delete>
+
+    <delete id="deleteImsPracticeByIds" parameterType="String">
+        update ims_practice set del_flag = '2' where practice_id in
+        <foreach item="practiceId" collection="array" open="(" separator="," close=")">
+            #{practiceId}
+        </foreach>
+    </delete>
+    
+</mapper>

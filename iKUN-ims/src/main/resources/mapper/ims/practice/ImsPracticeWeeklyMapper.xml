@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.practice.mapper.ImsPracticeWeeklyMapper">
+    
+    <resultMap type="ImsPracticeWeekly" id="ImsPracticeWeeklyResult">
+        <result property="weeklyId"    column="weekly_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="practiceId"    column="practice_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="assessmenType"    column="assessmen_type"    />
+        <result property="weeklyTitle"    column="weekly_title"    />
+        <result property="weeklyContent"    column="weekly_content"    />
+        <result property="commentabled"    column="commentabled"    />
+        <result property="published"    column="published"    />
+        <result property="beginTime"    column="begin_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="week"    column="week"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="status"    column="status"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsPracticeWeeklyVo">
+        select weekly_id, user_id, practice_id, assessmen_type, weekly_title, weekly_content, commentabled,published, begin_time, end_time, week, del_flag, status, create_dept, create_by, create_time, update_by, update_time from ims_practice_weekly
+    </sql>
+
+    <sql id="selectImsPracticeWeekWithInfoVo">
+       SELECT ipw.weekly_id, ipw.user_id,su.user_name,su.nick_name,sd.dept_name,ip.company_name, ipw.practice_id, ipw.assessmen_type, ipw.weekly_title, ipw.weekly_content, ipw.commentabled,ipw.published, ipw.begin_time, ipw.end_time, ipw.week, ipw.del_flag, ipw.status, ipw.create_dept, ipw.create_by, ipw.create_time, ipw.update_by, ipw.update_time FROM ims_practice_weekly ipw
+        LEFT JOIN ims_practice ip ON ip.practice_id = ipw.practice_id
+        LEFT JOIN sys_user su ON ipw.user_id = su.user_id
+        LEFT JOIN sys_dept sd ON sd.dept_id = su.dept_id
+    </sql>
+
+
+    <!--教师查看-->
+    <select id="selectImsPracticeWeeklyWithNameList" parameterType="ImsPracticeWeekly" resultMap="ImsPracticeWeeklyResult">
+        <include refid="selectImsPracticeWeekWithInfoVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="practiceId != null "> and practice_id = #{practiceId}</if>
+            <if test="assessmenType != null  and assessmenType != ''"> and assessmen_type = #{assessmenType}</if>
+            <if test="weeklyTitle != null  and weeklyTitle != ''"> and weekly_title = #{weeklyTitle}</if>
+            <if test="weeklyContent != null  and weeklyContent != ''"> and weekly_content = #{weeklyContent}</if>
+            <if test="commentabled != null  and commentabled != ''"> and commentabled = #{commentabled}</if>
+            <if test="beginTime != null "> and begin_time = #{beginTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="week != null  and week != ''"> and week = #{week}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+            <if test="1 == 1 "> and del_flag = '0'</if>
+        </where>
+    </select>
+
+    <!--学生-->
+    <select id="selectImsPracticeWeeklyList" parameterType="ImsPracticeWeekly" resultMap="ImsPracticeWeeklyResult">
+        <include refid="selectImsPracticeWeekWithInfoVo"/>
+        <where>  
+            <if test="userId != null "> and ipw.user_id = #{userId}</if>
+            <if test="practiceId != null "> and ipw.practice_id = #{practiceId}</if>
+            <if test="assessmenType != null  and assessmenType != ''"> and ipw.assessmen_type = #{assessmenType}</if>
+            <if test="weeklyTitle != null  and weeklyTitle != ''"> and ipw.weekly_title = #{weeklyTitle}</if>
+            <if test="beginTime != null "> and ipw.begin_time = #{beginTime}</if>
+            <if test="endTime != null "> and ipw.end_time = #{endTime}</if>
+            <if test="week != null  and week != ''"> and ipw.week = #{week}</if>
+            <if test="status != null  and status != ''"> and ipw.status = #{status}</if>
+            <if test="1 == 1 "> and ipw.del_flag = '0'</if>
+        </where>
+    </select>
+    
+    <select id="selectImsPracticeWeeklyById" parameterType="Long" resultMap="ImsPracticeWeeklyResult">
+        <include refid="selectImsPracticeWeekWithInfoVo"/>
+        where weekly_id = #{weeklyId}
+    </select>
+
+    <!--统计最大周数-->
+    <select id="selectMaxWeek" parameterType="Long" resultType="Integer">
+        select week from ims_practice_weekly
+        where update_time = (select max(update_time) from ims_practice_weekly where assessmen_type = '0')
+        <if test="userId != null "> and user_id = #{userId}</if>
+        group by user_id
+    </select>
+        
+    <insert id="insertImsPracticeWeekly" parameterType="ImsPracticeWeekly" useGeneratedKeys="true" keyProperty="weeklyId">
+        insert into ims_practice_weekly
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="weeklyId != null">weekly_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="practiceId != null">practice_id,</if>
+            <if test="assessmenType != null">assessmen_type,</if>
+            <if test="weeklyTitle != null">weekly_title,</if>
+            <if test="weeklyContent != null">weekly_content,</if>
+            <if test="commentabled != null">commentabled,</if>
+            <if test="published != null">published,</if>
+            <if test="beginTime != null">begin_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="week != null">week,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="status != null">status,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="weeklyId != null">#{weeklyId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="practiceId != null">#{practiceId},</if>
+            <if test="assessmenType != null">#{assessmenType},</if>
+            <if test="weeklyTitle != null">#{weeklyTitle},</if>
+            <if test="weeklyContent != null">#{weeklyContent},</if>
+            <if test="commentabled != null">#{commentabled},</if>
+            <if test="published != null">#{published},</if>
+            <if test="beginTime != null">#{beginTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="week != null">#{week},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsPracticeWeekly" parameterType="ImsPracticeWeekly">
+        update ims_practice_weekly
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="practiceId != null">practice_id = #{practiceId},</if>
+            <if test="assessmenType != null">assessmen_type = #{assessmenType},</if>
+            <if test="weeklyTitle != null">weekly_title = #{weeklyTitle},</if>
+            <if test="weeklyContent != null">weekly_content = #{weeklyContent},</if>
+            <if test="commentabled != null">commentabled = #{commentabled},</if>
+            <if test="published != null">published = #{published},</if>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="week != null">week = #{week},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where weekly_id = #{weeklyId}
+    </update>
+
+    <delete id="deleteImsPracticeWeeklyById" parameterType="Long">
+        update ims_practice_weekly set del_flag = '2' where weekly_id = #{weeklyId}
+    </delete>
+
+    <delete id="deleteImsPracticeWeeklyByIds" parameterType="String">
+        update ims_practice_weekly set del_flag = '2' where weekly_id in
+        <foreach item="weeklyId" collection="array" open="(" separator="," close=")">
+            #{weeklyId}
+        </foreach>
+    </delete>
+    
+</mapper>

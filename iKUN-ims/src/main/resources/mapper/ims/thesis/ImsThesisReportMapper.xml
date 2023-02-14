@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.thesis.mapper.ImsThesisReportMapper">
+    
+    <resultMap type="ImsThesisReport" id="ImsThesisReportResult">
+        <result property="reportId"    column="report_id"    />
+        <result property="topicId"    column="topic_id"    />
+        <result property="topicTitle"    column="topic_title"    />
+        <result property="overview"    column="overview"    />
+        <result property="goal"    column="goal"    />
+        <result property="method"    column="method"    />
+        <result property="innovation"    column="innovation"    />
+        <result property="researchContent"    column="research_content"    />
+        <result property="process"    column="process"    />
+        <result property="reference"    column="reference"    />
+        <result property="requirement"    column="requirement"    />
+        <result property="teaOpinion"    column="tea_opinion"    />
+        <result property="deptOpinion"    column="dept_opinion"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="subTime"    column="sub_time"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsThesisReportVo">
+        select report_id, topic_id, topic_title, overview, goal, method, innovation, research_content, process, reference, requirement, tea_opinion, dept_opinion, del_flag, sub_time, create_dept, create_by, create_time, update_by, update_time from ims_thesis_report
+    </sql>
+
+    <select id="selectImsThesisReportList" parameterType="ImsThesisReport" resultMap="ImsThesisReportResult">
+        <include refid="selectImsThesisReportVo"/>
+        <where>  
+            <if test="topicId != null  and topicId != ''"> and topic_id = #{topicId}</if>
+            <if test="topicTitle != null  and topicTitle != ''"> and topic_title = #{topicTitle}</if>
+            <if test="overview != null  and overview != ''"> and overview = #{overview}</if>
+            <if test="goal != null  and goal != ''"> and goal = #{goal}</if>
+            <if test="method != null  and method != ''"> and method = #{method}</if>
+            <if test="innovation != null  and innovation != ''"> and innovation = #{innovation}</if>
+            <if test="researchContent != null  and researchContent != ''"> and research_content = #{researchContent}</if>
+            <if test="process != null  and process != ''"> and process = #{process}</if>
+            <if test="reference != null  and reference != ''"> and reference = #{reference}</if>
+            <if test="requirement != null  and requirement != ''"> and requirement = #{requirement}</if>
+            <if test="teaOpinion != null  and teaOpinion != ''"> and tea_opinion = #{teaOpinion}</if>
+            <if test="deptOpinion != null  and deptOpinion != ''"> and dept_opinion = #{deptOpinion}</if>
+            <if test="subTime != null "> and sub_time = #{subTime}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsThesisReportById" parameterType="Long" resultMap="ImsThesisReportResult">
+        <include refid="selectImsThesisReportVo"/>
+        where report_id = #{reportId}
+    </select>
+        
+    <insert id="insertImsThesisReport" parameterType="ImsThesisReport" useGeneratedKeys="true" keyProperty="reportId">
+        insert into ims_thesis_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="topicId != null">topic_id,</if>
+            <if test="topicTitle != null">topic_title,</if>
+            <if test="overview != null">overview,</if>
+            <if test="goal != null">goal,</if>
+            <if test="method != null">method,</if>
+            <if test="innovation != null">innovation,</if>
+            <if test="researchContent != null">research_content,</if>
+            <if test="process != null">process,</if>
+            <if test="reference != null">reference,</if>
+            <if test="requirement != null">requirement,</if>
+            <if test="teaOpinion != null">tea_opinion,</if>
+            <if test="deptOpinion != null">dept_opinion,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="subTime != null">sub_time,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="topicId != null">#{topicId},</if>
+            <if test="topicTitle != null">#{topicTitle},</if>
+            <if test="overview != null">#{overview},</if>
+            <if test="goal != null">#{goal},</if>
+            <if test="method != null">#{method},</if>
+            <if test="innovation != null">#{innovation},</if>
+            <if test="researchContent != null">#{researchContent},</if>
+            <if test="process != null">#{process},</if>
+            <if test="reference != null">#{reference},</if>
+            <if test="requirement != null">#{requirement},</if>
+            <if test="teaOpinion != null">#{teaOpinion},</if>
+            <if test="deptOpinion != null">#{deptOpinion},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="subTime != null">#{subTime},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsThesisReport" parameterType="ImsThesisReport">
+        update ims_thesis_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="topicId != null">topic_id = #{topicId},</if>
+            <if test="topicTitle != null">topic_title = #{topicTitle},</if>
+            <if test="overview != null">overview = #{overview},</if>
+            <if test="goal != null">goal = #{goal},</if>
+            <if test="method != null">method = #{method},</if>
+            <if test="innovation != null">innovation = #{innovation},</if>
+            <if test="researchContent != null">research_content = #{researchContent},</if>
+            <if test="process != null">process = #{process},</if>
+            <if test="reference != null">reference = #{reference},</if>
+            <if test="requirement != null">requirement = #{requirement},</if>
+            <if test="teaOpinion != null">tea_opinion = #{teaOpinion},</if>
+            <if test="deptOpinion != null">dept_opinion = #{deptOpinion},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="subTime != null">sub_time = #{subTime},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where report_id = #{reportId}
+    </update>
+
+    <delete id="deleteImsThesisReportById" parameterType="Long">
+        update ims_thesis_report set del_flag = '2' where report_id = #{reportId}
+    </delete>
+
+    <delete id="deleteImsThesisReportByIds" parameterType="String">
+        update ims_thesis_report set del_flag = '2' where report_id in
+        <foreach item="reportId" collection="array" open="(" separator="," close=")">
+            #{reportId}
+        </foreach>
+    </delete>
+    
+</mapper>

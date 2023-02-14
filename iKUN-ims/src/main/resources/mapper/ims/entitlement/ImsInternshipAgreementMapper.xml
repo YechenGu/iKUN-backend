@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.entitlement.mapper.ImsInternshipAgreementMapper">
+    
+    <resultMap type="ImsInternshipAgreement" id="ImsInternshipAgreementResult">
+        <result property="iaId"    column="ia_id"    />
+        <result property="practiceId"    column="practice_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="userId"    column="user_id"    />
+        <result property="schoolInstructor"    column="school_instructor"    />
+        <result property="theTerm"    column="the_term"    />
+        <result property="iaType"    column="ia_type"    />
+        <result property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsInternshipAgreementVo">
+        select ia_id, practice_id, the_term, ia_type, file_id, file_name, remark, del_flag, create_dept, create_by, create_time, update_by, update_time from ims_internship_agreement
+    </sql>
+    <sql id="selectImsInternshipAgreement">
+        select ia_id, ia.practice_id, ip.company_name, ip.user_id, ip.school_instructor, the_term, ia_type, file_id, file_name, remark, ia.del_flag, ia.create_dept, ia.create_by, ia.create_time, ia.update_by, ia.update_time from ims_internship_agreement ia
+        LEFT JOIN ims_practice ip on ip.practice_id = ia.practice_id
+    </sql>
+
+    <select id="selectImsInternshipAgreementList" parameterType="ImsInternshipAgreement" resultMap="ImsInternshipAgreementResult">
+        <include refid="selectImsInternshipAgreement"/>
+        <where>  
+            <if test="practiceId != null "> and ia.practice_id like concat('%', #{practiceId}, '%')</if>
+            <if test="theTerm != null  and theTerm != ''"> and the_term like concat('%', #{theTerm}, '%')</if>
+            <if test="iaType != null  and iaType != ''"> and ia_type = #{iaType}</if>
+            <if test="fileId != null  and fileId != ''"> and file_id = #{fileId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="createDept != null  and createDept != ''"> and ia.create_dept like concat('%', #{createDept}, '%')</if>
+            <if test=" 1 == 1">and ia.del_flag = '0' order by ia.create_time DESC</if>
+        </where>
+    </select>
+    
+    <select id="selectImsInternshipAgreementById" parameterType="Long" resultMap="ImsInternshipAgreementResult">
+        <include refid="selectImsInternshipAgreement"/>
+        where ia_id = #{iaId}
+    </select>
+        
+    <insert id="insertImsInternshipAgreement" parameterType="ImsInternshipAgreement" useGeneratedKeys="true" keyProperty="iaId">
+        insert into ims_internship_agreement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="practiceId != null">practice_id,</if>
+            <if test="theTerm != null">the_term,</if>
+            <if test="iaType != null">ia_type,</if>
+            <if test="fileId != null">file_id,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="practiceId != null">#{practiceId},</if>
+            <if test="theTerm != null">#{theTerm},</if>
+            <if test="iaType != null">#{iaType},</if>
+            <if test="fileId != null">#{fileId},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsInternshipAgreement" parameterType="ImsInternshipAgreement">
+        update ims_internship_agreement
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="practiceId != null">practice_id = #{practiceId},</if>
+            <if test="theTerm != null">the_term = #{theTerm},</if>
+            <if test="iaType != null">ia_type = #{iaType},</if>
+            <if test="fileId != null">file_id = #{fileId},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where ia_id = #{iaId}
+    </update>
+
+    <delete id="deleteImsInternshipAgreementById" parameterType="Long">
+        update ims_internship_agreement set del_flag = '2' where ia_id = #{iaId}
+    </delete>
+
+    <delete id="deleteImsInternshipAgreementByIds" parameterType="String">
+        update ims_internship_agreement set del_flag = '2' where ia_id in
+        <foreach item="iaId" collection="array" open="(" separator="," close=")">
+            #{iaId}
+        </foreach>
+    </delete>
+    
+</mapper>

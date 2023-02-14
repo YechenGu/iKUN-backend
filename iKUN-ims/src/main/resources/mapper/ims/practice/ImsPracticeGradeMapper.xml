@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.practice.mapper.ImsPracticeGradeMapper">
+    
+    <resultMap type="ImsPracticeGrade" id="ImsPracticeGradeResult">
+        <result property="gradeId"    column="grade_id"    />
+        <result property="practiceId"    column="practice_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="piResult"    column="pi_result"    />
+        <result property="srResult"    column="sr_result"    />
+        <result property="totalScore"    column="total_score"    />
+        <result property="teaOpinion"    column="tea_opinion"    />
+        <result property="groupOpinion"    column="group_opinion"    />
+        <result property="deptOpinion"    column="dept_opinion"    />
+        <result property="gradeDesc"    column="grade_desc"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsPracticeGradeVo">
+        select pg.grade_id, pg.practice_id,ip.company_name, su.nick_name, pg.pi_result, pg.sr_result, pg.total_score, pg.tea_opinion, pg.group_opinion, pg.dept_opinion, pg.grade_desc, pg.status, pg.del_flag, pg.create_dept, pg.create_by, pg.create_time, pg.update_by, pg.update_time from ims_practice_grade pg left join ims_practice ip on ip.practice_id = pg.practice_id
+                                                                                                                                                                                                                                                                                                                      left join sys_user su on ip.user_id = su.user_id
+#         select grade_id, practice_id, pi_result, sr_result, total_score, tea_opinion, group_opinion, dept_opinion, grade_desc, status, del_flag, create_dept, create_by, create_time, update_by, update_time from ims_practice_grade
+    </sql>
+
+    <select id="selectImsPracticeGradeList" parameterType="ImsPracticeGrade" resultMap="ImsPracticeGradeResult">
+        <include refid="selectImsPracticeGradeVo"/>
+        <where>  
+            <if test="practiceId != null "> and pg.practice_id = #{practiceId}</if>
+            <if test="piResult != null  and piResult != ''"> and pg.pi_result = #{piResult}</if>
+            <if test="srResult != null  and srResult != ''"> and pg.sr_result = #{srResult}</if>
+            <if test="totalScore != null  and totalScore != ''"> and pg.total_score = #{totalScore}</if>
+            <if test="teaOpinion != null  and teaOpinion != ''"> and pg.tea_opinion = #{teaOpinion}</if>
+            <if test="groupOpinion != null  and groupOpinion != ''"> pg.and group_opinion = #{groupOpinion}</if>
+            <if test="deptOpinion != null  and deptOpinion != ''"> and pg.dept_opinion = #{deptOpinion}</if>
+            <if test="gradeDesc != null  and gradeDesc != ''"> and pg.grade_desc = #{gradeDesc}</if>
+            <if test="status != null  and status != ''"> and pg.status = #{status}</if>
+            <if test="createDept != null  and createDept != ''"> and pg.create_dept = #{createDept}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsPracticeGradeById" parameterType="Long" resultMap="ImsPracticeGradeResult">
+        <include refid="selectImsPracticeGradeVo"/>
+        where grade_id = #{gradeId}
+    </select>
+        
+    <insert id="insertImsPracticeGrade" parameterType="ImsPracticeGrade" useGeneratedKeys="true" keyProperty="gradeId">
+        insert into ims_practice_grade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="practiceId != null">practice_id,</if>
+            <if test="piResult != null">pi_result,</if>
+            <if test="srResult != null">sr_result,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="teaOpinion != null">tea_opinion,</if>
+            <if test="groupOpinion != null">group_opinion,</if>
+            <if test="deptOpinion != null">dept_opinion,</if>
+            <if test="gradeDesc != null">grade_desc,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="practiceId != null">#{practiceId},</if>
+            <if test="piResult != null">#{piResult},</if>
+            <if test="srResult != null">#{srResult},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="teaOpinion != null">#{teaOpinion},</if>
+            <if test="groupOpinion != null">#{groupOpinion},</if>
+            <if test="deptOpinion != null">#{deptOpinion},</if>
+            <if test="gradeDesc != null">#{gradeDesc},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsPracticeGrade" parameterType="ImsPracticeGrade">
+        update ims_practice_grade
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="practiceId != null">practice_id = #{practiceId},</if>
+            <if test="piResult != null">pi_result = #{piResult},</if>
+            <if test="srResult != null">sr_result = #{srResult},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="teaOpinion != null">tea_opinion = #{teaOpinion},</if>
+            <if test="groupOpinion != null">group_opinion = #{groupOpinion},</if>
+            <if test="deptOpinion != null">dept_opinion = #{deptOpinion},</if>
+            <if test="gradeDesc != null">grade_desc = #{gradeDesc},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where grade_id = #{gradeId}
+    </update>
+
+    <delete id="deleteImsPracticeGradeById" parameterType="Long">
+        update ims_practice_grade set del_flag = '2' where grade_id = #{gradeId}
+    </delete>
+
+    <delete id="deleteImsPracticeGradeByIds" parameterType="String">
+        update ims_practice_grade set del_flag = '2' where grade_id in
+        <foreach item="gradeId" collection="array" open="(" separator="," close=")">
+            #{gradeId}
+        </foreach>
+    </delete>
+    
+</mapper>

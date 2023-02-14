@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.task.mapper.ImsApprovalDetailsMapper">
+    
+    <resultMap type="ImsApprovalDetails" id="ImsApprovalDetailsResult">
+        <result property="approvalId"    column="approval_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="childId"    column="child_id"    />
+        <result property="taskProcessType"    column="task_process_type"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="approvalConclusion"    column="approval_conclusion"    />
+        <result property="approvalOpinions"    column="approval_opinions"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateDept"    column="update_dept"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsApprovalDetailsVo">
+        select approval_id, user_id, role_id, dept_id, child_id, task_process_type, task_status, approval_status, approval_conclusion, approval_opinions, create_dept, create_time, update_dept, update_time from ims_approval_details
+    </sql>
+
+    <select id="selectImsApprovalDetailsList" parameterType="ImsApprovalDetails" resultMap="ImsApprovalDetailsResult">
+        <include refid="selectImsApprovalDetailsVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="roleId != null "> and role_id = #{roleId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="childId != null "> and child_id = #{childId}</if>
+            <if test="taskProcessType != null "> and task_process_type = #{taskProcessType}</if>
+            <if test="taskStatus != null  and taskStatus != ''"> and task_status = #{taskStatus}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and approval_status = #{approvalStatus}</if>
+            <if test="approvalConclusion != null  and approvalConclusion != ''"> and approval_conclusion = #{approvalConclusion}</if>
+            <if test="approvalOpinions != null  and approvalOpinions != ''"> and approval_opinions = #{approvalOpinions}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+            <if test="updateDept != null  and updateDept != ''"> and update_dept = #{updateDept}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsApprovalDetailsById" parameterType="Long" resultMap="ImsApprovalDetailsResult">
+        <include refid="selectImsApprovalDetailsVo"/>
+        where approval_id = #{approvalId}
+    </select>
+        
+    <insert id="insertImsApprovalDetails" parameterType="ImsApprovalDetails">
+        insert into ims_approval_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="approvalId != null">approval_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="childId != null">child_id,</if>
+            <if test="taskProcessType != null">task_process_type,</if>
+            <if test="taskStatus != null">task_status,</if>
+            <if test="approvalStatus != null">approval_status,</if>
+            <if test="approvalConclusion != null">approval_conclusion,</if>
+            <if test="approvalOpinions != null">approval_opinions,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateDept != null">update_dept,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="approvalId != null">#{approvalId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="roleId != null">#{roleId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="childId != null">#{childId},</if>
+            <if test="taskProcessType != null">#{taskProcessType},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="approvalStatus != null">#{approvalStatus},</if>
+            <if test="approvalConclusion != null">#{approvalConclusion},</if>
+            <if test="approvalOpinions != null">#{approvalOpinions},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateDept != null">#{updateDept},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsApprovalDetails" parameterType="ImsApprovalDetails">
+        update ims_approval_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="roleId != null">role_id = #{roleId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="childId != null">child_id = #{childId},</if>
+            <if test="taskProcessType != null">task_process_type = #{taskProcessType},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="approvalStatus != null">approval_status = #{approvalStatus},</if>
+            <if test="approvalConclusion != null">approval_conclusion = #{approvalConclusion},</if>
+            <if test="approvalOpinions != null">approval_opinions = #{approvalOpinions},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateDept != null">update_dept = #{updateDept},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where approval_id = #{approvalId}
+    </update>
+
+    <delete id="deleteImsApprovalDetailsById" parameterType="Long">
+        delete from ims_approval_details where approval_id = #{approvalId}
+    </delete>
+
+    <delete id="deleteImsApprovalDetailsByIds" parameterType="String">
+        delete from ims_approval_details where approval_id in 
+        <foreach item="approvalId" collection="array" open="(" separator="," close=")">
+            #{approvalId}
+        </foreach>
+    </delete>
+    
+</mapper>

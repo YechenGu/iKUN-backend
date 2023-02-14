@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.task.mapper.ImsTaskInfoMapper">
+    
+    <resultMap type="ImsTaskInfo" id="ImsTaskInfoResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="processType"    column="process_type"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="academicYear"    column="academic_year"    />
+        <result property="semester"    column="semester"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="taskProgress"    column="task_progress"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="status"    column="status"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsTaskInfoVo">
+        select task_id, task_name, process_type,iti.dept_id, sd.dept_name, academic_year, semester, end_time, task_progress, iti.del_flag, iti.status, iti.create_dept, iti.create_by, iti.create_time, iti.update_by, iti.update_time from ims_task_info iti LEFT JOIN sys_dept sd on sd.dept_id = iti.dept_id
+    </sql>
+
+    <select id="selectImsTaskInfoList" parameterType="ImsTaskInfo" resultMap="ImsTaskInfoResult">
+        <include refid="selectImsTaskInfoVo"/>
+        <where>  
+            <if test="taskName != null  and taskName != ''"> and task_name = #{taskName}</if>
+            <if test="deptId != null  and deptId != ''"> and iti.dept_id = #{deptId}</if>
+            <if test="deptName != null  and deptName != ''"> and sd.dept_name = #{deptName}</if>
+            <if test="processType != null  and processType != ''"> and process_type = #{processType}</if>
+            <if test="academicYear != null  and academicYear != ''"> and academic_year = #{academicYear}</if>
+            <if test="semester != null  and semester != ''"> and semester = #{semester}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="taskProgress != null  and taskProgress != ''"> and task_progress = #{taskProgress}</if>
+            <if test="status != null  and status != ''"> and iti.status = #{status}</if>
+            <if test="createDept != null  and createDept != ''"> and iti.create_dept = #{createDept}</if>
+            <if test=" 1 == 1 ">and iti.del_flag = '0'</if>
+            <if test=" 1 == 1 ">order by iti.task_progress ASC</if>
+        </where>
+    </select>
+    
+    <select id="selectImsTaskInfoById" parameterType="Long" resultMap="ImsTaskInfoResult">
+        <include refid="selectImsTaskInfoVo"/>
+        where task_id = #{taskId}
+    </select>
+
+    <select id="selectImsTaskInfoByTopicTask" parameterType="ImsTaskInfo" resultMap="ImsTaskInfoResult">
+        <include refid="selectImsTaskInfoVo"/>
+        where iti.dept_id = #{deptId} and (academic_year = #{academicYear} or academic_year = #{academicYear} - 1) and process_type = #{processType}
+    </select>
+
+    <select id="selectImsTaskInfoByDeptId" parameterType="Long" resultMap="ImsTaskInfoResult">
+        <include refid="selectImsTaskInfoVo"/>
+        where iti.dept_id = #{deptId}
+    </select>
+
+    <insert id="insertImsTaskInfo" parameterType="ImsTaskInfo" useGeneratedKeys="true" keyProperty="taskId">
+        insert into ims_task_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="taskName != null">task_name,</if>
+            <if test="processType != null">process_type,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="academicYear != null">academic_year,</if>
+            <if test="semester != null">semester,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="taskProgress != null">task_progress,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="status != null">status,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="taskName != null">#{taskName},</if>
+            <if test="processType != null">#{processType},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="academicYear != null">#{academicYear},</if>
+            <if test="semester != null">#{semester},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="taskProgress != null">#{taskProgress},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsTaskInfo" parameterType="ImsTaskInfo">
+        update ims_task_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskName != null">task_name = #{taskName},</if>
+            <if test="processType != null">process_type = #{processType},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="academicYear != null">academic_year = #{academicYear},</if>
+            <if test="semester != null">semester = #{semester},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="taskProgress != null">task_progress = #{taskProgress},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteImsTaskInfoById" parameterType="Long">
+        update ims_task_info set del_flag = '2' where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteImsTaskInfoByIds" parameterType="String">
+        update ims_task_info set del_flag = '2' where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+    
+</mapper>

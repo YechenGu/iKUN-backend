@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.dashboard.mapper.ImsDashBoardMapper">
+
+    <!--实习周志统计分析-->
+    <resultMap type="ImsPracticeWeeklyStatisticsVo"  id="ImsPracticeWeeklyStatisticsResult">
+        <result property="userId"    column="user_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="status"    column="status"    />
+        <result property="week"    column="week"    />
+        <result property="published"    column="published"    />
+        <result property="assessmenType"    column="assessmen_type"    />
+        <result property="academicYear"    column="academic_year"    />
+    </resultMap>
+
+    <resultMap id="ImsDashBoardTaskResult" type="ImsDashBoardTaskVo">
+        <result property="userId"    column="user_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="processType"    column="process_type"    />
+        <result property="academicYear"    column="academic_year"    />
+        <result property="semester"    column="semester"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="taskProgress"    column="task_progress"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <resultMap id="ImsDashBoardNoticeResult" type="ImsDashBoardNoticeVo">
+        <result property="noticeId"       column="notice_id"       />
+        <result property="deptId"         column="dept_id"         />
+        <result property="noticeTitle"    column="notice_title"    />
+        <result property="noticeType"     column="notice_type"     />
+        <result property="noticeContent"  column="notice_content"  />
+        <result property="status"         column="status"          />
+        <result property="createBy"    column="create_by"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <!--首页分析-->
+    <sql id="selectPracticeWeeklyListByUserId">
+        SELECT ip.user_id, ip.task_id, it.academic_year, su.dept_id, ipw.assessmen_type, ipw.week, ipw.status, ipw.published
+        FROM ims_practice ip left join sys_user su on su.user_id = ip.user_id left join ims_task_info it on it.task_id = ip.task_id left join ims_practice_weekly ipw on ip.practice_id = ipw.practice_id
+    </sql>
+
+    <!--我的任务-->
+    <sql id="selectTaskInfoByUserId">
+        select iti.task_id , iti.task_name, iti.process_type, iti.academic_year,iti.semester,iti.end_time,iti.task_progress, iti.del_flag, iti.create_by, iti.create_time , itd.user_id from ims_task_dept itd left join ims_task_info iti on itd.task_id = iti.task_id
+    </sql>
+
+    <sql id="selectNoticeByUserId">
+        select sn.notice_id,sn.dept_id,sn.notice_title,sn.notice_type,sn.notice_content,sn.status,sn.create_by, sn.create_time, sun.user_id from sys_notice sn left join sys_user_notice sun on sn.notice_id = sun.notice_id
+    </sql>
+
+    <!--实习人数统计相关分析接口-->
+    <select id="selectPracticeWeeklyStatisticsListInDashBoard" parameterType="ImsPracticeWeeklyStatisticsVo" resultMap="ImsPracticeWeeklyStatisticsResult">
+        <include refid="selectPracticeWeeklyListByUserId"/>
+        <where>
+            <if test="userId != null  and userId != ''"> and ip.user_id = #{userId}</if>
+            <if test="deptId != null and deptId != ''">AND (su.dept_id = #{deptId} OR su.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId}, ancestors)))</if>
+            <if test=" 1 == 1 "> and ipw.WEEK is not NULL</if>
+        </where>
+    </select>
+
+    <select id="selectTaskInfoByUserId" parameterType="ImsDashBoardTaskVo" resultMap="ImsDashBoardTaskResult">
+        <include refid="selectTaskInfoByUserId"/>
+        <where>
+            <if test="userId != null  and userId != ''"> and itd.user_id = #{userId}</if>
+            <if test=" 1 == 1 ">and iti.del_flag = '0';</if>
+        </where>
+    </select>
+
+    <select id="selectNoticeInfoByUserId" parameterType="ImsDashBoardNoticeVo" resultMap="ImsDashBoardNoticeResult">
+        <include refid="selectNoticeByUserId"/>
+        <where>
+            <if test="userId != null  and userId != ''"> and sun.user_id = #{userId}</if>
+            <if test=" 1 == 1"> and sn.status = '0'</if>
+        </where>
+    </select>
+
+</mapper>

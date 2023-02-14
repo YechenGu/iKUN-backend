@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.entitlement.mapper.ImsBenefitsMapper">
+    
+    <resultMap type="ImsBenefits" id="ImsBenefitsResult">
+        <result property="benefitsId"    column="benefits_id"    />
+        <result property="practiceId"    column="practice_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="welfare"    column="welfare"    />
+        <result property="postWage"    column="post_wage"    />
+        <result property="postTreatment"    column="post_treatment"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsBenefitsVo">
+        select benefits_id, practice_id,welfare, post_wage, post_treatment, remark, del_flag, create_dept, create_by, create_time, update_by, update_time from ims_benefits
+    </sql>
+    <sql id="selectImsBenefits">
+        select benefits_id, ib.practice_id,ip.company_name,welfare, post_wage, post_treatment, ib.remark, ib.del_flag, ib.create_dept, ib.create_by, ib.create_time, ib.update_by, ib.update_time from ims_benefits ib LEFT JOIN ims_practice ip on ip.practice_id = ib.practice_id
+    </sql>
+
+    <select id="selectImsBenefitsList" parameterType="ImsBenefits" resultMap="ImsBenefitsResult">
+        <include refid="selectImsBenefits"/>
+        <where>  
+            <if test="practiceId != null "> and practice_id = #{practiceId}</if>
+            <if test="welfare != null  and welfare != ''"> and welfare = #{welfare}</if>
+            <if test="postWage != null  and postWage != ''"> and post_wage = #{postWage}</if>
+            <if test="postTreatment != null  and postTreatment != ''"> and post_treatment = #{postTreatment}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsBenefitsById" parameterType="Long" resultMap="ImsBenefitsResult">
+        <include refid="selectImsBenefits"/>
+        where benefits_id = #{benefitsId}
+    </select>
+        
+    <insert id="insertImsBenefits" parameterType="ImsBenefits">
+        insert into ims_benefits
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="benefitsId != null">benefits_id,</if>
+            <if test="practiceId != null">practice_id,</if>
+            <if test="welfare != null">welfare,</if>
+            <if test="postWage != null">post_wage,</if>
+            <if test="postTreatment != null">post_treatment,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="benefitsId != null">#{benefitsId},</if>
+            <if test="practiceId != null">#{practiceId},</if>
+            <if test="welfare != null">#{welfare},</if>
+            <if test="postWage != null">#{postWage},</if>
+            <if test="postTreatment != null">#{postTreatment},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsBenefits" parameterType="ImsBenefits">
+        update ims_benefits
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="practiceId != null">practice_id = #{practiceId},</if>
+            <if test="welfare != null">welfare = #{welfare},</if>
+            <if test="postWage != null">post_wage = #{postWage},</if>
+            <if test="postTreatment != null">post_treatment = #{postTreatment},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where benefits_id = #{benefitsId}
+    </update>
+
+    <delete id="deleteImsBenefitsById" parameterType="Long">
+        update ims_benefits set del_flag = '2' where benefits_id = #{benefitsId}
+    </delete>
+
+    <delete id="deleteImsBenefitsByIds" parameterType="String">
+        update ims_benefits set del_flag = '2' where benefits_id in
+        <foreach item="benefitsId" collection="array" open="(" separator="," close=")">
+            #{benefitsId}
+        </foreach>
+    </delete>
+    
+</mapper>

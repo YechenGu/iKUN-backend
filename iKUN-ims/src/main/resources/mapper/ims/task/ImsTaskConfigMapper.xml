@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.task.mapper.ImsTaskConfigMapper">
+    
+    <resultMap type="ImsTaskConfig" id="ImsTaskConfigResult">
+        <result property="processId"    column="process_id"    />
+        <result property="processType"    column="process_type"    />
+        <result property="processNum"    column="process_num"    />
+        <result property="processChildType"    column="process_child_type"    />
+        <result property="stage"    column="stage"    />
+        <result property="stageMappering"    column="stage_mappering"    />
+        <result property="role"    column="role"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="isCheckNode"    column="is_check_node"    />
+        <result property="checkConclusion"    column="check_conclusion"    />
+        <result property="processEnd"    column="process_end"    />
+        <result property="nextProcessId"    column="next_process_id"    />
+        <result property="nextInstitutionType"    column="next_institution_type"    />
+    </resultMap>
+
+    <sql id="selectImsTaskConfigVo">
+        select process_id, process_type, process_num, process_child_type, stage, stage_mappering, role, node_type, is_check_node, check_conclusion, process_end, next_process_id, next_institution_type from ims_task_config
+    </sql>
+
+    <select id="selectImsTaskConfig" parameterType="ImsTaskConfig" resultMap="ImsTaskConfigResult">
+        <include refid="selectImsTaskConfigVo"/>
+        <where>
+            <if test="processType != null  and processType != ''"> and process_type = #{processType}</if>
+            <if test="processNum != null "> and process_num = #{processNum}</if>
+            <if test="processChildType != null  and processChildType != ''"> and process_child_type = #{processChildType}</if>
+            <if test="stage != null  and stage != ''"> and stage = #{stage}</if>
+            <if test="stageMappering != null  and stageMappering != ''"> and stage_mappering = #{stageMappering}</if>
+            <if test="role != null "> and role = #{role}</if>
+            <if test="nodeType != null  and nodeType != ''"> and node_type = #{nodeType}</if>
+            <if test="isCheckNode != null  and isCheckNode != ''"> and is_check_node = #{isCheckNode}</if>
+            <if test="checkConclusion != null  and checkConclusion != ''"> and check_conclusion = #{checkConclusion}</if>
+            <if test=" 1 == 1">limit 1</if>
+        </where>
+    </select>
+
+    <select id="selectImsTaskConfigList" parameterType="ImsTaskConfig" resultMap="ImsTaskConfigResult">
+        <include refid="selectImsTaskConfigVo"/>
+        <where>  
+            <if test="processType != null  and processType != ''"> and process_type = #{processType}</if>
+            <if test="processNum != null "> and process_num = #{processNum}</if>
+            <if test="processChildType != null  and processChildType != ''"> and process_child_type = #{processChildType}</if>
+            <if test="stage != null  and stage != ''"> and stage = #{stage}</if>
+            <if test="stageMappering != null  and stageMappering != ''"> and stage_mappering = #{stageMappering}</if>
+            <if test="role != null "> and role = #{role}</if>
+            <if test="nodeType != null  and nodeType != ''"> and node_type = #{nodeType}</if>
+            <if test="isCheckNode != null  and isCheckNode != ''"> and is_check_node = #{isCheckNode}</if>
+            <if test="checkConclusion != null  and checkConclusion != ''"> and check_conclusion = #{checkConclusion}</if>
+            <if test="processEnd != null  and processEnd != ''"> and process_end = #{processEnd}</if>
+            <if test="nextProcessId != null  and nextProcessId != ''"> and next_process_id = #{nextProcessId}</if>
+            <if test="nextInstitutionType != null  and nextInstitutionType != ''"> and next_institution_type = #{nextInstitutionType}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsTaskConfigById" parameterType="String" resultMap="ImsTaskConfigResult">
+        <include refid="selectImsTaskConfigVo"/>
+        where process_id = #{processId}
+    </select>
+        
+    <insert id="insertImsTaskConfig" parameterType="ImsTaskConfig">
+        insert into ims_task_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processId != null">process_id,</if>
+            <if test="processType != null">process_type,</if>
+            <if test="processNum != null">process_num,</if>
+            <if test="processChildType != null">process_child_type,</if>
+            <if test="stage != null">stage,</if>
+            <if test="stageMappering != null">stage_mappering,</if>
+            <if test="role != null">role,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="isCheckNode != null">is_check_node,</if>
+            <if test="checkConclusion != null">check_conclusion,</if>
+            <if test="processEnd != null">process_end,</if>
+            <if test="nextProcessId != null">next_process_id,</if>
+            <if test="nextInstitutionType != null">next_institution_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processId != null">#{processId},</if>
+            <if test="processType != null">#{processType},</if>
+            <if test="processNum != null">#{processNum},</if>
+            <if test="processChildType != null">#{processChildType},</if>
+            <if test="stage != null">#{stage},</if>
+            <if test="stageMappering != null">#{stageMappering},</if>
+            <if test="role != null">#{role},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="isCheckNode != null">#{isCheckNode},</if>
+            <if test="checkConclusion != null">#{checkConclusion},</if>
+            <if test="processEnd != null">#{processEnd},</if>
+            <if test="nextProcessId != null">#{nextProcessId},</if>
+            <if test="nextInstitutionType != null">#{nextInstitutionType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsTaskConfig" parameterType="ImsTaskConfig">
+        update ims_task_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processType != null">process_type = #{processType},</if>
+            <if test="processNum != null">process_num = #{processNum},</if>
+            <if test="processChildType != null">process_child_type = #{processChildType},</if>
+            <if test="stage != null">stage = #{stage},</if>
+            <if test="stageMappering != null">stage_mappering = #{stageMappering},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="isCheckNode != null">is_check_node = #{isCheckNode},</if>
+            <if test="checkConclusion != null">check_conclusion = #{checkConclusion},</if>
+            <if test="processEnd != null">process_end = #{processEnd},</if>
+            <if test="nextProcessId != null">next_process_id = #{nextProcessId},</if>
+            <if test="nextInstitutionType != null">next_institution_type = #{nextInstitutionType},</if>
+        </trim>
+        where process_id = #{processId}
+    </update>
+
+    <delete id="deleteImsTaskConfigById" parameterType="String">
+        delete from ims_task_config where process_id = #{processId}
+    </delete>
+
+    <delete id="deleteImsTaskConfigByIds" parameterType="String">
+        delete from ims_task_config where process_id in 
+        <foreach item="processId" collection="array" open="(" separator="," close=")">
+            #{processId}
+        </foreach>
+    </delete>
+    
+</mapper>

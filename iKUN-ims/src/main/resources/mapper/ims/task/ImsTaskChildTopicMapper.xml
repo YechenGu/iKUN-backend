@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.task.mapper.ImsTaskChildTopicMapper">
+    
+    <resultMap type="ImsTaskChildTopic" id="ImsTaskChildTopicResult">
+        <result property="childId"            column="child_id"    />
+        <result property="taskId"             column="task_id"    />
+        <result property="userId"             column="user_id"    />
+        <result property="businessId"         column="business_id"    />
+        <result property="processType"        column="process_type"    />
+        <result property="childProcessType"   column="child_process_type"    />
+        <result property="nextUser"           column="next_user"    />
+        <result property="nextRoleUser"       column="next_role_user"    />
+        <result property="nextDept"           column="next_dept"    />
+        <result property="childTaskStatus"    column="child_task_status"    />
+        <result property="childTaskProcess"   column="child_task_process"    />
+        <result property="createDept"         column="create_dept"    />
+        <result property="createBy"           column="create_by"    />
+        <result property="createTime"         column="create_time"    />
+        <result property="updateDept"         column="update_dept"    />
+        <result property="updateBy"           column="update_by"    />
+        <result property="updateTime"         column="update_time"    />
+    </resultMap>
+
+    <resultMap type="ImsThesisTopicChildVo" id="ImsThesisTopicChildVoResult" >
+        <result property="userId"             column="user_id"    />
+        <result property="childId"            column="child_id"    />
+        <result property="childProcessType"   column="child_process_type"    />
+        <result property="nextUser"           column="next_user"    />
+        <result property="childTaskStatus"    column="child_task_status"    />
+        <result property="childTaskProcess"   column="child_task_process"    />
+        <result property="createTime"         column="create_time"    />
+        <result property="nickName"           column="nick_name"    />
+        <result property="topicTitle"         column="topic_title"    />
+        <result property="topicSource"        column="topic_source"    />
+        <result property="topicType"          column="topic_type"    />
+        <result property="topicStatus"        column="topic_status"    />
+        <result property="stuNickName"        column="stu_nick_name"    />
+        <result property="subjectType"        column="subject_type"    />
+        <result property="academicYear"       column="academic_year"    />
+        <result property="businessId"         column="business_id"    />
+    </resultMap>
+
+    <sql id="selectImsTaskChildTopicVo">
+        select child_id, task_id, user_id, business_id, process_type, child_process_type, next_user, next_role_user, next_dept, child_task_status, child_task_process, create_dept, create_by, create_time, update_dept, update_by, update_time from ims_task_child_topic
+    </sql>
+
+    <!--论文题目审核sql-->
+    <sql id="selectThesisTopic">
+        select tct.user_id, tct.next_user, tct.business_id, iti.academic_year, tct.child_id, tct.child_process_type, tct.child_task_status, tct.child_task_process, tct.create_time, tt.topic_title,tt.topic_status, tt.topic_source, tt.subject_type, su.nick_name, u.stu_nick_name FROM ims_task_child_topic tct left join ims_thesis_topic tt on tct.business_id = tt.topic_id LEFT JOIN ims_task_info iti ON iti.task_id = tct.task_id left join sys_user su on su.user_id = tt.teacher_id left join (select user_id ,nick_name as stu_nick_name FROM sys_user where user_id = #{userId}) as u on u.user_id = tct.user_id
+#         select tct.next_user, tct.child_id, tct.child_process_type, tct.child_task_status, tct.child_task_process, tct.create_time, tt.topic_title,tt.topic_status, tt.topic_source, tt.subject_type, su.nick_name FROM ims_task_child_topic tct left join ims_thesis_topic tt on tct.business_id = tt.topic_id left join sys_user su on su.user_id = tt.teacher_id
+    </sql>
+
+    <select id="selectImsTaskChildTopicList" parameterType="ImsThesisTopicChildVo" resultMap="ImsTaskChildTopicResult">
+        <include refid="selectImsTaskChildTopicVo"/>
+        <where>  
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="processType != null  and processType != ''"> and process_type = #{processType}</if>
+            <if test="childProcessType != null  and childProcessType != ''"> and child_process_type = #{childProcessType}</if>
+            <if test="nextUser != null  and nextUser != ''"> and next_user = #{nextUser}</if>
+            <if test="nextRoleUser != null "> and next_role_user = #{nextRoleUser}</if>
+            <if test="nextDept != null  and nextDept != ''"> and next_dept = #{nextDept}</if>
+            <if test="childTaskStatus != null  and childTaskStatus != ''"> and child_task_status = #{childTaskStatus}</if>
+            <if test="childTaskProcess != null  and childTaskProcess != ''"> and child_task_process = #{childTaskProcess}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+            <if test="updateDept != null  and updateDept != ''"> and update_dept = #{updateDept}</if>
+        </where>
+    </select>
+
+    <!--论文题目列表-->
+    <select id="selectThesisTopicList" parameterType="ImsThesisTopicChildVo" resultMap="ImsThesisTopicChildVoResult">
+        <include refid="selectThesisTopic"/>
+        <where>
+            <if test="nextUser != null  and nextUser != ''"> and tct.next_user = #{nextUser}</if>
+            <if test="nickName != null  and nickName != ''"> and su.nick_name = #{nickName}</if>
+            <if test="nickName != null  and nickName != ''"> and u.stu_nick_name = #{stuNickName}</if>
+            <if test="childProcessType != null  and childProcessType != ''"> and tct.child_process_type = #{childProcessType}</if>
+            <if test="childTaskStatus != null  and childTaskStatus != ''"> and tct.child_task_status = #{childTaskStatus}</if>
+            <if test="childTaskProcess != null  and childTaskProcess != ''"> and tct.child_task_process = #{childTaskProcess}</if>
+            <if test="academicYear != null  and academicYear != ''"> and tct.academic_year = #{academicYear}</if>
+            <if test="topicTitle != null  and topicTitle != ''"> and tt.topic_title = #{topicTitle}</if>
+        </where>
+    </select>
+
+    <select id="selectImsTaskChildTopicById" parameterType="Long" resultMap="ImsTaskChildTopicResult">
+        <include refid="selectImsTaskChildTopicVo"/>
+        where child_id = #{childId}
+    </select>
+
+    <select id="selectImsTaskChildTopicByIds" parameterType="ImsTaskChildTopic" resultMap="ImsTaskChildTopicResult">
+        <include refid="selectImsTaskChildTopicVo"/>
+        where task_id = #{taskId} and user_id = #{userId} and business_id = #{businessId}
+        <if test="childProcessType != null  and childProcessType != ''"> and child_process_type = #{childProcessType}</if>
+    </select>
+        
+    <insert id="insertImsTaskChildTopic" parameterType="ImsTaskChildTopic">
+        insert into ims_task_child_topic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="childId != null">child_id,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="businessId != null">business_id,</if>
+            <if test="processType != null">process_type,</if>
+            <if test="childProcessType != null">child_process_type,</if>
+            <if test="nextUser != null">next_user,</if>
+            <if test="nextRoleUser != null">next_role_user,</if>
+            <if test="nextDept != null">next_dept,</if>
+            <if test="childTaskStatus != null">child_task_status,</if>
+            <if test="childTaskProcess != null">child_task_process,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateDept != null">update_dept,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="childId != null">#{childId},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="businessId != null">#{businessId},</if>
+            <if test="processType != null">#{processType},</if>
+            <if test="childProcessType != null">#{childProcessType},</if>
+            <if test="nextUser != null">#{nextUser},</if>
+            <if test="nextRoleUser != null">#{nextRoleUser},</if>
+            <if test="nextDept != null">#{nextDept},</if>
+            <if test="childTaskStatus != null">#{childTaskStatus},</if>
+            <if test="childTaskProcess != null">#{childTaskProcess},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateDept != null">#{updateDept},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsTaskChildTopic" parameterType="ImsTaskChildTopic">
+        update ims_task_child_topic
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="businessId != null">business_id = #{businessId},</if>
+            <if test="processType != null">process_type = #{processType},</if>
+            <if test="childProcessType != null">child_process_type = #{childProcessType},</if>
+            <if test="nextUser != null">next_user = #{nextUser},</if>
+            <if test="nextRoleUser != null">next_role_user = #{nextRoleUser},</if>
+            <if test="nextDept != null">next_dept = #{nextDept},</if>
+            <if test="childTaskStatus != null">child_task_status = #{childTaskStatus},</if>
+            <if test="childTaskProcess != null">child_task_process = #{childTaskProcess},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateDept != null">update_dept = #{updateDept},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where child_id = #{childId}
+    </update>
+
+    <delete id="deleteImsTaskChildTopicById" parameterType="Long">
+        delete from ims_task_child_topic where child_id = #{childId}
+    </delete>
+
+    <delete id="deleteImsTaskChildTopicByIds" parameterType="String">
+        delete from ims_task_child_topic where child_id in
+        <foreach item="childId" collection="array" open="(" separator="," close=")">
+            #{childId}
+        </foreach>
+    </delete>
+    
+</mapper>

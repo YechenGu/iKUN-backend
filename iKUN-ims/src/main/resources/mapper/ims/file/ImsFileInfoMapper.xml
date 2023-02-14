@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.file.mapper.ImsFileInfoMapper">
+    
+    <resultMap type="ImsFileInfo" id="ImsFileInfoResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectImsFileInfoVo">
+        select file_id, file_name, file_type, file_path, file_size, create_dept, del_flag, create_by, create_time from ims_file_info
+    </sql>
+
+    <select id="selectImsFileInfoList" parameterType="ImsFileInfo" resultMap="ImsFileInfoResult">
+        <include refid="selectImsFileInfoVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="fileType != null  and fileType != ''"> and file_type = #{fileType}</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="fileSize != null "> and file_size = #{fileSize}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsFileInfoById" parameterType="String" resultMap="ImsFileInfoResult">
+        <include refid="selectImsFileInfoVo"/>
+        where file_id = #{fileId}
+    </select>
+        
+    <insert id="insertImsFileInfo" parameterType="ImsFileInfo">
+        insert into ims_file_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">file_id,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="fileType != null">file_type,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">#{fileId},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="fileType != null">#{fileType},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <delete id="deleteImsFileInfoById" parameterType="String">
+        update ims_file_info set del_flag = '2' where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteImsFileInfoByIds" parameterType="String">
+        update ims_file_info set del_flag = '2' where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+    
+</mapper>

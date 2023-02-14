@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.enterprise.mapper.ImsEnterpriseInfoMapper">
+    
+    <resultMap type="ImsEnterpriseInfo" id="ImsEnterpriseInfoResult">
+        <result property="companyId"    column="company_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="companyProfile"    column="company_profile"    />
+        <result property="companyLocation"    column="company_location"    />
+        <result property="legalRepresentative"    column="legal_representative"    />
+        <result property="established"    column="established"    />
+        <result property="companyType"    column="company_type"    />
+        <result property="companyIndustry"    column="company_industry"    />
+        <result property="companyPrincipal"    column="company_principal"    />
+        <result property="principalPhone"    column="principal_phone"    />
+        <result property="principalEmail"    column="principal_email"    />
+        <result property="principalQq"    column="principal_qq"    />
+        <result property="recruitmentWebsite"    column="recruitment_website"    />
+        <result property="recruitStatus"    column="recruit_status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="status"    column="status"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsEnterpriseInfoVo">
+        select company_id, company_name, company_profile, company_location, legal_representative, established, company_type, company_industry, company_principal, principal_phone, principal_email, principal_qq,recruitment_website, recruit_status, del_flag, status, create_dept, create_by, create_time, update_by, update_time from ims_enterprise_info
+    </sql>
+
+    <!--岗位管理 新增  企业信息列表-->
+    <sql id="selectImsEnterpriseCompanyInfo">
+        select company_id, company_name from ims_enterprise_info
+    </sql>
+
+    <select id="selectImsEnterpriseCompanyInfoList" parameterType="ImsEnterpriseInfo" resultMap="ImsEnterpriseInfoResult">
+        <include refid="selectImsEnterpriseCompanyInfo"/>
+    </select>
+
+    <select id="selectImsEnterpriseInfoList" parameterType="ImsEnterpriseInfo" resultMap="ImsEnterpriseInfoResult">
+        <include refid="selectImsEnterpriseInfoVo"/>
+        <where>  
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="companyProfile != null  and companyProfile != ''"> and company_profile = #{companyProfile}</if>
+            <if test="companyLocation != null  and companyLocation != ''"> and company_location = #{companyLocation}</if>
+            <if test="legalRepresentative != null  and legalRepresentative != ''"> and legal_representative = #{legalRepresentative}</if>
+            <if test="companyType != null  and companyType != ''"> and company_type = #{companyType}</if>
+            <if test="companyIndustry != null  and companyIndustry != ''"> and company_industry = #{companyIndustry}</if>
+            <if test="companyPrincipal != null  and companyPrincipal != ''"> and company_principal = #{companyPrincipal}</if>
+            <if test="principalPhone != null  and principalPhone != ''"> and principal_phone = #{principalPhone}</if>
+            <if test="principalEmail != null  and principalEmail != ''"> and principal_email = #{principalEmail}</if>
+            <if test="principalQq != null  and principalQq != ''"> and principal_qq = #{principalQq}</if>
+            <if test="recruitStatus != null  and recruitStatus != ''"> and recruit_status = #{recruitStatus}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+            <if test="1 == 1 "> and del_flag = '0'</if>
+        </where>
+    </select>
+    
+    <select id="selectImsEnterpriseInfoById" parameterType="Long" resultMap="ImsEnterpriseInfoResult">
+        <include refid="selectImsEnterpriseInfoVo"/>
+        where company_id = #{companyId}
+    </select>
+
+    <select id="selectImsEnterpriseInfoByCompanyName" parameterType="ImsEnterpriseInfo" resultMap="ImsEnterpriseInfoResult">
+        <include refid="selectImsEnterpriseInfoVo"/>
+        where company_name = #{companyName}
+    </select>
+        
+    <insert id="insertImsEnterpriseInfo" parameterType="ImsEnterpriseInfo" useGeneratedKeys="true" keyProperty="companyId">
+        insert into ims_enterprise_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="companyProfile != null">company_profile,</if>
+            <if test="companyLocation != null">company_location,</if>
+            <if test="legalRepresentative != null">legal_representative,</if>
+            <if test="established != null">established,</if>
+            <if test="companyType != null">company_type,</if>
+            <if test="companyIndustry != null">company_industry,</if>
+            <if test="companyPrincipal != null">company_principal,</if>
+            <if test="principalPhone != null">principal_phone,</if>
+            <if test="principalEmail != null">principal_email,</if>
+            <if test="principalQq != null">principal_qq,</if>
+            <if test="recruitmentWebsite != null">recruitment_website,</if>
+            <if test="recruitStatus != null">recruit_status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="status != null">status,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="companyProfile != null">#{companyProfile},</if>
+            <if test="companyLocation != null">#{companyLocation},</if>
+            <if test="legalRepresentative != null">#{legalRepresentative},</if>
+            <if test="established != null">#{established},</if>
+            <if test="companyType != null">#{companyType},</if>
+            <if test="companyIndustry != null">#{companyIndustry},</if>
+            <if test="companyPrincipal != null">#{companyPrincipal},</if>
+            <if test="principalPhone != null">#{principalPhone},</if>
+            <if test="principalEmail != null">#{principalEmail},</if>
+            <if test="principalQq != null">#{principalQq},</if>
+            <if test="recruitmentWebsite != null">#{recruitmentWebsite},</if>
+            <if test="recruitStatus != null">#{recruitStatus},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsEnterpriseInfo" parameterType="ImsEnterpriseInfo">
+        update ims_enterprise_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="companyProfile != null">company_profile = #{companyProfile},</if>
+            <if test="companyLocation != null">company_location = #{companyLocation},</if>
+            <if test="legalRepresentative != null">legal_representative = #{legalRepresentative},</if>
+            <if test="established != null">established = #{established},</if>
+            <if test="companyType != null">company_type = #{companyType},</if>
+            <if test="companyIndustry != null">company_industry = #{companyIndustry},</if>
+            <if test="companyPrincipal != null">company_principal = #{companyPrincipal},</if>
+            <if test="principalPhone != null">principal_phone = #{principalPhone},</if>
+            <if test="principalEmail != null">principal_email = #{principalEmail},</if>
+            <if test="principalQq != null">principal_qq = #{principalQq},</if>
+            <if test="recruitmentWebsite != null">recruitment_website = #{recruitmentWebsite},</if>
+            <if test="recruitStatus != null">recruit_status = #{recruitStatus},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where company_id = #{companyId}
+    </update>
+
+    <delete id="deleteImsEnterpriseInfoById" parameterType="Long">
+        update from ims_enterprise_info set del_flag = '2' where company_id = #{companyId}
+    </delete>
+
+    <delete id="deleteImsEnterpriseInfoByIds" parameterType="String">
+        update from ims_enterprise_info set del_flag = '2' where company_id in
+        <foreach item="companyId" collection="array" open="(" separator="," close=")">
+            #{companyId}
+        </foreach>
+    </delete>
+    
+</mapper>

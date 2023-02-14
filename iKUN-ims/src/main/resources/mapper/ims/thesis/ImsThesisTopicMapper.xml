@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iKUN.thesis.mapper.ImsThesisTopicMapper">
+    
+    <resultMap type="ImsThesisTopic" id="ImsThesisTopicResult">
+        <result property="topicId"    column="topic_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="teacherId"    column="teacher_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="topicTitle"    column="topic_title"    />
+        <result property="topicSource"    column="topic_source"    />
+        <result property="topicType"    column="topic_type"    />
+        <result property="topicDesc"    column="topic_desc"    />
+        <result property="topicStatus"    column="topic_status"    />
+        <result property="subjectCategory"    column="subject_category"    />
+        <result property="subjectType"    column="subject_type"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createDept"    column="create_dept"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectImsThesisTopicVo">
+        select it.topic_id, it.user_id, it.teacher_id, su.nick_name, it.task_id, it.dept_id, it.topic_title, it.topic_source, it.topic_type, it.topic_desc, it.topic_status,it.subject_category, it.subject_type, it.del_flag, it.create_dept, it.create_by, it.create_time, it.update_by, it.update_time from ims_thesis_topic it left join sys_user su on su.user_id = it.teacher_id
+#         select topic_id, user_id, teacher_id, task_id, dept_id, topic_title, topic_source, topic_type, topic_desc, topic_status, subject_category, subject_type, del_flag, create_dept, create_by, create_time, update_by, update_time from ims_thesis_topic
+    </sql>
+
+    <select id="selectImsThesisTopicList" parameterType="ImsThesisTopic" resultMap="ImsThesisTopicResult">
+        <include refid="selectImsThesisTopicVo"/>
+        <where>  
+            <if test="userId != null "> and it.user_id = #{userId}</if>
+            <if test="teacherId != null "> and teacher_id = #{teacherId}</if>
+            <if test="topicTitle != null  and topicTitle != ''"> and topic_title = #{topicTitle}</if>
+            <if test="topicSource != null  and topicSource != ''"> and topic_source = #{topicSource}</if>
+            <if test="topicType != null  and topicType != ''"> and topic_type = #{topicType}</if>
+            <if test="topicDesc != null  and topicDesc != ''"> and topic_desc = #{topicDesc}</if>
+            <if test="topicStatus != null  and topicStatus != ''"> and topic_status = #{topicStatus}</if>
+            <if test="subjectCategory != null  and subjectCategory != ''"> and subject_category = #{subjectCategory}</if>
+            <if test="subjectType != null  and subjectType != ''"> and subject_type = #{subjectType}</if>
+            <if test="createDept != null  and createDept != ''"> and create_dept = #{createDept}</if>
+        </where>
+    </select>
+    
+    <select id="selectImsThesisTopicById" parameterType="String" resultMap="ImsThesisTopicResult">
+        <include refid="selectImsThesisTopicVo"/>
+        where it.topic_id = #{topicId}
+    </select>
+
+    <select id="selectImsThesisTopicByUserId" parameterType="Long" resultMap="ImsThesisTopicResult">
+        <include refid="selectImsThesisTopicVo"/>
+        where it.user_id = #{userId}
+    </select>
+        
+    <insert id="insertImsThesisTopic" parameterType="ImsThesisTopic">
+        insert into ims_thesis_topic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="topicId != null">topic_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="teacherId != null">teacher_id,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="topicTitle != null">topic_title,</if>
+            <if test="topicSource != null">topic_source,</if>
+            <if test="topicType != null">topic_type,</if>
+            <if test="topicDesc != null">topic_desc,</if>
+            <if test="topicStatus != null">topic_status,</if>
+            <if test="subjectCategory != null">subject_category,</if>
+            <if test="subjectType != null">subject_type,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createDept != null">create_dept,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="topicId != null">#{topicId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="teacherId != null">#{teacherId},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="topicTitle != null">#{topicTitle},</if>
+            <if test="topicSource != null">#{topicSource},</if>
+            <if test="topicType != null">#{topicType},</if>
+            <if test="topicDesc != null">#{topicDesc},</if>
+            <if test="topicStatus != null">#{topicStatus},</if>
+            <if test="subjectCategory != null">#{subjectCategory},</if>
+            <if test="subjectType != null">#{subjectType},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createDept != null">#{createDept},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImsThesisTopic" parameterType="ImsThesisTopic">
+        update ims_thesis_topic
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="teacherId != null">teacher_id = #{teacherId},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="topicTitle != null">topic_title = #{topicTitle},</if>
+            <if test="topicSource != null">topic_source = #{topicSource},</if>
+            <if test="topicType != null">topic_type = #{topicType},</if>
+            <if test="topicDesc != null">topic_desc = #{topicDesc},</if>
+            <if test="topicStatus != null">topic_status = #{topicStatus},</if>
+            <if test="subjectCategory != null">subject_category = #{subjectCategory},</if>
+            <if test="subjectType != null">subject_type = #{subjectType},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createDept != null">create_dept = #{createDept},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where topic_id = #{topicId}
+    </update>
+
+    <delete id="deleteImsThesisTopicById" parameterType="String">
+        update ims_thesis_topic set del_flag = '2' where topic_id = #{topicId}
+    </delete>
+
+    <delete id="deleteImsThesisTopicByIds" parameterType="String">
+        update ims_thesis_topic set del_flag = '2' where topic_id in
+        <foreach item="topicId" collection="array" open="(" separator="," close=")">
+            #{topicId}
+        </foreach>
+    </delete>
+    
+</mapper>
